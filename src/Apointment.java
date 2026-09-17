@@ -6,7 +6,13 @@ import java.time.format.ResolverStyle;
 
 public class Apointment {
 
+    private static final DateTimeFormatter DATE_FMT =
+            DateTimeFormatter.ofPattern("MM/dd/uuuu").withResolverStyle(ResolverStyle.STRICT);
+
+
     public void bookApointment(Scanner input){
+
+
 
         String patientName = "", patientAddress = "", patientContact = "";
         String selectedDentist = "";
@@ -33,6 +39,7 @@ public class Apointment {
 
                 if(dentistChoice >= 1 && dentistChoice <= Dentist.dentistList.length){
                     selectedDentist = Dentist.dentistList[dentistChoice - 1].name;
+                    input.nextLine();
                     break;
                 }else{
                     System.out.println("Invalid choice! Please select a valid dentist.");
@@ -53,7 +60,7 @@ public class Apointment {
                 System.out.println("\n===== DATE =====");
                 System.out.print("Enter appointment date (MM/DD/YYYY): ");
                 appointmentDate = input.nextLine();
-                input.nextLine();
+
                 try{
                     date = LocalDate.parse(appointmentDate, dateFormat);
                     if(date.isBefore(today)){
@@ -71,7 +78,7 @@ public class Apointment {
             System.out.println("[4] 3:00 PM  - 5:00 PM");
 
             while (true){
-                System.out.println("Select time slot: ");
+                System.out.print("Select time slot: ");
                 if(input.hasNextInt()){
                     timeChoice = input.nextInt();
                     input.nextLine();
@@ -196,5 +203,178 @@ public class Apointment {
             System.out.println("Appointment not confirmed.");
         }
 
+    }
+
+    public void updateAppointment(Scanner input){
+
+        AppointmentRecord.viewAppointment();
+
+        if(AppointmentRecord.appointment.isEmpty()){
+            return;
+        }
+
+        int choice;
+        while(true){
+            System.out.print("\nEnter appointment number to update (0 to cancel): ");
+            if(input.hasNextInt()){
+                choice = input.nextInt();
+                input.nextLine();
+                if(choice == 0) return;
+                if(choice >= 1 && choice <= AppointmentRecord.appointment.size()) break;
+                System.out.println("Invalid choice! Please select a valid appointment number.");
+            }else{
+                System.out.println("Invalid input! Please enter a number.");
+                input.nextLine();
+            }
+        }
+
+        AppointmentRecord record = AppointmentRecord.appointment.get(choice - 1);
+
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("MM/dd/uuuu").withResolverStyle(ResolverStyle.STRICT);
+        LocalDate today = LocalDate.now();
+        LocalDate newDate;
+        String newTime = "";
+
+        while(true){
+            LocalDate date;
+            while(true){
+                System.out.print("\nEnter new appointment date (MM/DD/YYYY): ");
+                String dateInput = input.nextLine();
+                try{
+                    date = LocalDate.parse(dateInput, dateFormat);
+                    if(date.isBefore(today)){
+                        System.out.println("Invalid date! Please choose today or a future date.");
+                    }else break;
+                }catch(DateTimeParseException e){
+                    System.out.println("Invalid Date Format. Please use MM/DD/YYYY");
+                }
+            }
+
+            System.out.println("\n===== SELECT TIME SLOT =====");
+            System.out.println("[1] 8:00 AM  - 10:00 AM");
+            System.out.println("[2] 10:00 AM - 12:00 PM");
+            System.out.println("[3] 1:00 PM  - 3:00 PM");
+            System.out.println("[4] 3:00 PM  - 5:00 PM");
+
+            int timeChoice;
+            while(true){
+                System.out.print("Select time slot: ");
+                if(input.hasNextInt()){
+                    timeChoice = input.nextInt();
+                    input.nextLine();
+                    if(timeChoice >= 1 && timeChoice <= 4) break;
+                    System.out.println("Invalid choice! Please select 1-4.");
+                }else{
+                    System.out.println("Invalid input! Please enter a number.");
+                    input.nextLine();
+                }
+            }
+
+            switch(timeChoice){
+                case 1: newTime = "8:00 AM - 10:00 AM"; break;
+                case 2: newTime = "10:00 AM - 12:00 PM"; break;
+                case 3: newTime = "1:00 PM - 3:00 PM"; break;
+                default: newTime = "3:00 PM - 5:00 PM"; break;
+            }
+
+            if(AppointmentRecord.hasConflict(record, date, newTime, record.dentist)){
+                System.out.println("\n" + record.dentist + " is already booked at this date and time.");
+                System.out.println("Please choose a different date or time slot.");
+            }else{
+                newDate = date;
+                break;
+            }
+        }
+
+        String confirm;
+        while(true) {
+            System.out.print("\nConfirm Appointment? (Y/N): ");
+            confirm = input.nextLine();
+
+            if (confirm.equalsIgnoreCase("Y") || confirm.equalsIgnoreCase("N")) break;
+            System.out.println("Invalid input! Please enter Y or N.");
+        }
+
+            if(confirm.equalsIgnoreCase("Y")){
+
+                record.date = newDate;
+                record.time = newTime;
+
+                System.out.println("\n======================================");
+                System.out.println("       APPOINTMENT UPDATED");
+                System.out.println("======================================");
+                System.out.println("Patient : " + record.patientName);
+                System.out.println("Dentist : " + record.dentist);
+                System.out.println("Service : " + record.services);
+                System.out.println("Date    : " + record.date.format(dateFormat));
+                System.out.println("Time    : " + record.time);
+                System.out.println("======================================");
+            }else{
+                System.out.println("\nUpdate cancelled. Appointment unchanged.");
+            }
+    }
+
+    private AppointmentRecord selectAppointment(Scanner input, String actionLabel){
+        AppointmentRecord.viewAppointment();
+
+        if(AppointmentRecord.appointment.isEmpty()){
+            return null;
+        }
+
+        while(true){
+            System.out.println("\nEnter Appointment Number" + actionLabel + "(0 to cancel");
+
+            if(input.hasNextInt()){
+                int choice = input.nextInt();
+                input.nextLine();
+
+                if(choice == 0) return null;
+
+                if(choice >= 1 && choice <= AppointmentRecord.appointment.size()){
+                    AppointmentRecord record = AppointmentRecord.appointment.get(choice - 1);
+
+                    if(!record.status.equalsIgnoreCase("Confirmed")){
+                        System.out.println("That appointment is already " + record.status + ". Please choose another.");
+                        continue;
+                    }
+                    return record;
+                }
+                System.out.println("Invalid choice! Please select a valid appointment number.");
+            }else {
+                System.out.println("Invalid input! Please enter a number.");
+                input.nextLine();
+            }
+        }
+    }
+
+    public void cancelAppointment(Scanner input){
+
+        AppointmentRecord record = selectAppointment(input, "cancel");
+        if(record == null) return;
+
+        System.out.println("\n======================================");
+        System.out.println("        CANCEL APPOINTMENT");
+        System.out.println("======================================");
+        System.out.println("Patient : " + record.patientName);
+        System.out.println("Dentist : " + record.dentist);
+        System.out.println("Service : " + record.services);
+        System.out.println("Date    : " + record.date.format(DATE_FMT));
+        System.out.println("Time    : " + record.time);
+        System.out.println("======================================");
+
+        String confirm;
+        while(true){
+            System.out.print("\nAre you sure you want to cancel this appointment? (Y/N): ");
+            confirm = input.nextLine();
+            if(confirm.equalsIgnoreCase("Y") || confirm.equalsIgnoreCase("N")) break;
+            System.out.println("Invalid input! Please enter Y or N.");
+        }
+
+        if(confirm.equalsIgnoreCase("Y")){
+            record.status = "Cancelled";
+            System.out.println("\nAppointment cancelled successfully.");
+        }else{
+            System.out.println("\nCancellation aborted. Appointment remains " + record.status + ".");
+        }
     }
 }

@@ -30,7 +30,7 @@ public class AppointmentRecord {
         this.time = time;
         this.dentist = dentist;
         this.fee = fee;
-        this.status = "Confirm";
+        this.status = status;
     }
 
     public static boolean addAppointment(AppointmentRecord newAppointment){
@@ -85,6 +85,8 @@ public class AppointmentRecord {
 
         }
     }
+
+
 
 
 }
