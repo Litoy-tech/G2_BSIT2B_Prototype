@@ -1,11 +1,10 @@
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class AppointmentRecord {
 
-    static ArrayList<AppointmentRecord> appointment = new ArrayList<>();
+    static ArrayList<AppointmentRecord> appointments = new ArrayList<>();
 
     private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("MM/dd/uuuu");
 
@@ -34,19 +33,19 @@ public class AppointmentRecord {
     }
 
     public static boolean addAppointment(AppointmentRecord newAppointment){
-        for(AppointmentRecord appointment : appointment){
+        for(AppointmentRecord appointment : appointments){
             if(appointment.status.equals("Confirmed") && appointment.date.equals(newAppointment.date)
                     && appointment.time.equals(newAppointment.time) && appointment.dentist.equals(newAppointment.dentist)){
                 return false;
             }
         }
 
-        appointment.add(newAppointment);
+        appointments.add(newAppointment);
         return true;
     }
 
     public static boolean hasConflict(AppointmentRecord editing, LocalDate date, String time, String dentist){
-        for(AppointmentRecord appointment: appointment){
+        for(AppointmentRecord appointment: appointments){
             if(appointment == editing) continue;
             if (appointment.status.equals("Confirmed") && appointment.date.equals(date)
                     && appointment.time.equals(time)
@@ -62,13 +61,13 @@ public class AppointmentRecord {
         System.out.println("          ALL APPOINTMENTS");
         System.out.println("======================================");
 
-        if(appointment.isEmpty()){
+        if(appointments.isEmpty()){
             System.out.println("No appointments found.");
             return;
         }
 
-        for(int i = 0; i < appointment.size(); i++){
-            AppointmentRecord a = appointment.get(i);
+        for(int i = 0; i < appointments.size(); i++){
+            AppointmentRecord a = appointments.get(i);
 
             System.out.println("\nAppointment #" + (i + 1));
             System.out.println("Patient : " + a.patientName);

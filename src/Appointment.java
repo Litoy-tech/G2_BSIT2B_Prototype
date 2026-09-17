@@ -295,12 +295,12 @@ public class Appointment {
     private AppointmentRecord selectAppointment(Scanner input, String actionLabel){
         AppointmentRecord.viewAppointment();
 
-        if(AppointmentRecord.appointment.isEmpty()){
+        if(AppointmentRecord.appointments.isEmpty()){
             return null;
         }
 
         while(true){
-            System.out.print("\nEnter Appointment Number" + actionLabel + "(0 to cancel): ");
+            System.out.print("\nEnter Appointment Number " + actionLabel + "(0 to cancel): ");
 
             if(input.hasNextInt()){
                 int choice = input.nextInt();
@@ -308,8 +308,8 @@ public class Appointment {
 
                 if(choice == 0) return null;
 
-                if(choice >= 1 && choice <= AppointmentRecord.appointment.size()){
-                    AppointmentRecord record = AppointmentRecord.appointment.get(choice - 1);
+                if(choice >= 1 && choice <= AppointmentRecord.appointments.size()){
+                    AppointmentRecord record = AppointmentRecord.appointments.get(choice - 1);
 
                     if(!record.status.equalsIgnoreCase("Confirmed")){
                         System.out.println("That appointment is already " + record.status + ". Please choose another.");
