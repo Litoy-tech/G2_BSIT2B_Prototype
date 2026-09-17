@@ -33,10 +33,17 @@ public class Staff {
 
             switch (choice){
                 case 1:
+                    Service service = new Service();
+                    service.services();
+                    System.out.println();
                     break;
                 case 2:
+                    AppointmentRecord.viewAppointment();
+                    System.out.println("\n");
                     break;
                 case 3:
+                    Apointment book = new Apointment();
+                    book.bookApointment(input);
                     break;
                 case 4:
                     System.out.println("Logging out...");
@@ -45,6 +52,12 @@ public class Staff {
                     System.out.println("Invalid choice!");
             }
         }
+    }
+
+    public void managePatient(){
 
     }
 }
+
+
+

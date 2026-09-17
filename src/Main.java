@@ -31,7 +31,7 @@ public class Main{
                 input.nextLine(); // remove invalid input
             }
         }
-
+        System.out.println();
         if(choice == 1){
             System.out.println("Register soon");
 
@@ -63,9 +63,10 @@ public class Main{
                 }
 
                 if (staff.authenticate(enteredUsername, enteredPassword)) {
-                    System.out.println("Login successful!");
+                    System.out.println("\nLogin successful!");
                     loggedIn = true;
-
+                    input.nextLine();
+                    System.out.println("\n\n");
                     staff.staffMenu();
                     break;
                 }else{

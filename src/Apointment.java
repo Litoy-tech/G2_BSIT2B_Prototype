@@ -19,7 +19,7 @@ public class Apointment {
         System.out.println("          BOOK AN APPOINTMENT");
         System.out.println("======================================");
 
-        System.out.println("\\n  ===== SELECT DENTIST =====");
+        System.out.println("\n  ===== SELECT DENTIST =====");
         for (int i = 0; i < Dentist.dentistList.length; i++){
             System.out.println("  [" + (i+1)+ "]" + Dentist.dentistList[i].name);
         }
@@ -27,7 +27,7 @@ public class Apointment {
         int dentistChoice;
 
         while(true){
-            System.out.println("  Select Dentist: ");
+            System.out.print("  Select Dentist: ");
             if(input.hasNext()){
                 dentistChoice = input.nextInt();
 
@@ -53,6 +53,7 @@ public class Apointment {
                 System.out.println("\n===== DATE =====");
                 System.out.print("Enter appointment date (MM/DD/YYYY): ");
                 appointmentDate = input.nextLine();
+                input.nextLine();
                 try{
                     date = LocalDate.parse(appointmentDate, dateFormat);
                     if(date.isBefore(today)){
@@ -139,5 +140,61 @@ public class Apointment {
                 input.nextLine();
             }
         }
+
+        selectedServices = Service.NAMES[serviceChoice - 1];
+        serviceFee = Service.FEES[serviceChoice - 1];
+
+        System.out.println("======================================");
+        System.out.println("          APPOINTMENT SUMMARY");
+        System.out.println("======================================");
+        System.out.println();
+        System.out.println("Patient Name : " + patientName);
+        System.out.println("Address      : " + patientAddress);
+        System.out.println("Contact No.  : " + patientContact);
+        System.out.println();
+        System.out.println("Dentist      : " + selectedDentist);
+        System.out.println("Service      : " + selectedServices);
+        System.out.println("Date         : " + date.format(dateFormat));
+        System.out.println("Time         : " + appointmentTime);
+        System.out.println("Estimated Fee: PHP " + serviceFee);
+
+        String confirm;
+        while(true){
+            System.out.print("\nConfirm Appointment? (Y/N): ");
+            confirm = input.nextLine();
+
+            if(confirm.equalsIgnoreCase("Y") || confirm.equalsIgnoreCase("N")) break;
+            System.out.println("Invalid input! Please enter Y or N.");
+        }
+
+        if(confirm.equalsIgnoreCase("Y")){
+
+            AppointmentRecord newAppointment = new AppointmentRecord(patientName,
+                    patientAddress, patientContact, selectedServices, date, appointmentTime, selectedDentist, serviceFee, "Confirmed");
+
+            if(AppointmentRecord.addAppointment(newAppointment)){
+                System.out.println("\nAppointment Confirmed!");
+                System.out.println("\n======================================");
+                System.out.println("       APPOINTMENT CONFIRMED");
+                System.out.println("======================================");
+                System.out.println();
+                System.out.println("Patient Name : " + patientName);
+                System.out.println("Address      : " + patientAddress);
+                System.out.println("Contact No.  : " + patientContact);
+                System.out.println("Dentist      : " + selectedDentist);
+                System.out.println();
+                System.out.println("Service      : " + selectedServices);
+                System.out.println("Date         : " + date.format(dateFormat));
+                System.out.println("Time         : " + appointmentTime);
+                System.out.println("Estimated Fee: PHP " + serviceFee);
+                System.out.println("Status       : Confirmed");
+                System.out.println("======================================");
+            }else {
+                System.out.println("This schedule is already booked.");
+            }
+        }else {
+            System.out.println("Appointment not confirmed.");
+        }
+
     }
 }
