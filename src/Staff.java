@@ -13,10 +13,10 @@ public class Staff {
         return userName.equals(enteredUsername) && password.equals(enteredPassword);
     }
 
-    public void staffMenu(){
+    public void staffMenu(Scanner input){
         int choice;
 
-        Scanner input = new Scanner(System.in);
+
 
         while(true){
             System.out.println("======================================");
@@ -27,8 +27,21 @@ public class Staff {
             System.out.println("[3] Exit");
             System.out.println("======================================");
 
-            System.out.print("Select: ");
-            choice = input.nextInt();
+            while(true){
+                System.out.print("Select: ");
+                if(input.hasNextInt()){
+                    choice = input.nextInt();
+                    input.nextLine();
+                    if(choice < 1 || choice > 3){
+                        System.out.println("Invalid Choice! Try again");
+                    }else{
+                        break;
+                    }
+                }else{
+                    System.out.println("Invalid Input! Please enter a number.");
+                    input.nextLine();
+                }
+            }
 
             switch (choice){
                 case 1:
@@ -42,8 +55,6 @@ public class Staff {
                 case 3:
                     System.out.println("Logging out...");
                     return;
-                default:
-                    System.out.println("Invalid choice!");
             }
         }
     }
@@ -67,7 +78,7 @@ public class Staff {
                 if(input.hasNextInt()){
                     choice = input.nextInt();
                     input.nextLine();
-                    if(choice < 1 && choice > 5) {
+                    if(choice < 1 || choice > 5) {
                         System.out.println("Invalid Choice! Try again");
                     }else{
                         break;
@@ -80,7 +91,7 @@ public class Staff {
 
             switch (choice){
                 case 1:
-                    Apointment book = new Apointment();
+                    Appointment book = new Appointment();
                     book.bookApointment(input);
                     break;
                 case 2:
@@ -88,9 +99,12 @@ public class Staff {
                     System.out.println("\n\n");
                     break;
                 case 3:
-                    Apointment update = new Apointment();
+                    Appointment update = new Appointment();
                     update.updateAppointment(input);
                     break;
+                case 4:
+                    Appointment cancel = new Appointment();
+                    cancel.cancelAppointment(input);
             }
 
         }while(choice != 5);

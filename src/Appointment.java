@@ -4,15 +4,13 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
 
-public class Apointment {
+public class Appointment {
 
     private static final DateTimeFormatter DATE_FMT =
             DateTimeFormatter.ofPattern("MM/dd/uuuu").withResolverStyle(ResolverStyle.STRICT);
 
 
     public void bookApointment(Scanner input){
-
-
 
         String patientName = "", patientAddress = "", patientContact = "";
         String selectedDentist = "";
@@ -34,7 +32,7 @@ public class Apointment {
 
         while(true){
             System.out.print("  Select Dentist: ");
-            if(input.hasNext()){
+            if(input.hasNextInt()){
                 dentistChoice = input.nextInt();
 
                 if(dentistChoice >= 1 && dentistChoice <= Dentist.dentistList.length){
@@ -207,28 +205,8 @@ public class Apointment {
 
     public void updateAppointment(Scanner input){
 
-        AppointmentRecord.viewAppointment();
-
-        if(AppointmentRecord.appointment.isEmpty()){
-            return;
-        }
-
-        int choice;
-        while(true){
-            System.out.print("\nEnter appointment number to update (0 to cancel): ");
-            if(input.hasNextInt()){
-                choice = input.nextInt();
-                input.nextLine();
-                if(choice == 0) return;
-                if(choice >= 1 && choice <= AppointmentRecord.appointment.size()) break;
-                System.out.println("Invalid choice! Please select a valid appointment number.");
-            }else{
-                System.out.println("Invalid input! Please enter a number.");
-                input.nextLine();
-            }
-        }
-
-        AppointmentRecord record = AppointmentRecord.appointment.get(choice - 1);
+        AppointmentRecord record = selectAppointment(input, " to update");
+        if(record == null) return;
 
         DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("MM/dd/uuuu").withResolverStyle(ResolverStyle.STRICT);
         LocalDate today = LocalDate.now();
@@ -295,23 +273,23 @@ public class Apointment {
             System.out.println("Invalid input! Please enter Y or N.");
         }
 
-            if(confirm.equalsIgnoreCase("Y")){
+        if(confirm.equalsIgnoreCase("Y")){
 
-                record.date = newDate;
-                record.time = newTime;
+            record.date = newDate;
+            record.time = newTime;
 
-                System.out.println("\n======================================");
-                System.out.println("       APPOINTMENT UPDATED");
-                System.out.println("======================================");
-                System.out.println("Patient : " + record.patientName);
-                System.out.println("Dentist : " + record.dentist);
-                System.out.println("Service : " + record.services);
-                System.out.println("Date    : " + record.date.format(dateFormat));
-                System.out.println("Time    : " + record.time);
-                System.out.println("======================================");
-            }else{
-                System.out.println("\nUpdate cancelled. Appointment unchanged.");
-            }
+            System.out.println("\n======================================");
+            System.out.println("       APPOINTMENT UPDATED");
+            System.out.println("======================================");
+            System.out.println("Patient : " + record.patientName);
+            System.out.println("Dentist : " + record.dentist);
+            System.out.println("Service : " + record.services);
+            System.out.println("Date    : " + record.date.format(dateFormat));
+            System.out.println("Time    : " + record.time);
+            System.out.println("======================================");
+        }else{
+            System.out.println("\nUpdate cancelled. Appointment unchanged.");
+        }
     }
 
     private AppointmentRecord selectAppointment(Scanner input, String actionLabel){
@@ -322,7 +300,7 @@ public class Apointment {
         }
 
         while(true){
-            System.out.println("\nEnter Appointment Number" + actionLabel + "(0 to cancel");
+            System.out.print("\nEnter Appointment Number" + actionLabel + "(0 to cancel): ");
 
             if(input.hasNextInt()){
                 int choice = input.nextInt();

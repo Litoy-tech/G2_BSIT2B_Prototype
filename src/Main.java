@@ -67,7 +67,7 @@ public class Main{
                     loggedIn = true;
                     input.nextLine();
                     System.out.println("\n\n");
-                    staff.staffMenu();
+                    staff.staffMenu(input);
                     break;
                 }else{
                     attemps--;
